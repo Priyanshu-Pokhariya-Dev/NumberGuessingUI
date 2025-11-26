@@ -10,23 +10,35 @@ history = db["history"]
 
 
 def save_score(name, attempts):
-    history.insert_one({
-        "name": name,
-        "attempts": attempts,
-        "date": datetime.now()
-    })
+    history.update_one(
+        {"_id": name},
+        {
+            "$set": {
+                "attempts": attempts,
+                "date": datetime.now()
+            }
+        },
+        upsert=True
+    )
 
-    existing = best_scores.find_one({"name": name})
+    existing = best_scores.find_one({"_id": name})
 
     if existing:
         if attempts < existing["attempts"]:
-            best_scores.update_one({"name": name}, {"$set": {"attempts": attempts}})
+            best_scores.update_one(
+                {"_id": name},
+                {"$set": {"attempts": attempts}}
+            )
     else:
-        best_scores.insert_one({"name": name, "attempts": attempts})
+        best_scores.insert_one({
+            "_id": name,
+            "attempts": attempts
+        })
+
 
 
 def get_history(name):
-    return list(history.find({"name": name}).sort("date", -1))
+    return list(history.find({"_id": name}).sort("date", -1))
 
 
 def get_leaderboard():
