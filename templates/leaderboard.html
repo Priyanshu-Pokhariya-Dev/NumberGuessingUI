@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>🏆 Leaderboard (Best Scores)</h2>
+
+<h3>🥇 Global #1 Record</h3>
+<div class="box">
+    {% if global_best %}
+    <strong>{{ global_best.name }}</strong> — {{ global_best.attempts }} attempts
+    {% else %}
+    No global score yet.
+    {% endif %}
+</div>
+
+<br>
+
+<h3>All Players</h3>
+<ol>
+    {% for r in rankings %}
+    <li>{{ r.name }} — {{ r.attempts }} attempts</li>
+    {% endfor %}
+</ol>
+
+<br>
+<a href="/">Back to Home</a>
+
+{% endblock %}

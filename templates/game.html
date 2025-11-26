@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Hello {{ player }}! Guess the number between 1 and 100</h2>
+
+{% if result %}
+<h3 style="color:green;">{{ result }}</h3>
+
+<h3>Your Guess History</h3>
+<div class="box">
+    <ul>
+        {% for h in history %}
+        <li>{{ h.date.strftime("%Y-%m-%d %H:%M:%S") }} — {{ h.attempts }} attempts</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<br>
+<a href="/new_game">Play Again</a> |
+<a href="/leaderboard">Leaderboard</a>
+
+{% else %}
+
+<div class="box">
+    <form method="POST">
+        <input type="number" name="guess" required placeholder="Enter guess">
+        <button type="submit">Guess</button>
+    </form>
+</div>
+
+<p>{{ message | safe }}</p>
+<p>Attempts: {{ attempts }}</p>
+
+{% endif %}
+
+{% endblock %}

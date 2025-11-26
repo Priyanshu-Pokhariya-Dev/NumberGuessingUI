@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome to the Guessing Game!</h2>
+
+<div class="box">
+    <form method="POST">
+        <label>Enter your name:</label><br>
+        <input type="text" name="name" required>
+        <button type="submit">Start Game</button>
+    </form>
+</div>
+
+<br>
+<a href="/leaderboard">🏆 View Leaderboard</a>
+{% endblock %}
