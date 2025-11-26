@@ -9,7 +9,6 @@ best_scores = db["best_scores"]
 history = db["history"]
 
 
-# ------------------ SAVE SCORE ----------------------
 def save_score(name, attempts):
     history.insert_one({
         "name": name,
@@ -26,12 +25,10 @@ def save_score(name, attempts):
         best_scores.insert_one({"name": name, "attempts": attempts})
 
 
-# ------------------ GET PLAYER HISTORY ----------------------
 def get_history(name):
     return list(history.find({"name": name}).sort("date", -1))
 
 
-# ------------------ GET LEADERBOARD ----------------------
 def get_leaderboard():
     return best_scores.find().sort("attempts", 1)
 
