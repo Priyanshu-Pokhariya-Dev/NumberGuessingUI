@@ -4,13 +4,33 @@
 <h2>Hello {{ player }}! Guess the number between 1 and 100</h2>
 
 {% if result %}
+<!-- 🎉 GAME FINISHED -->
 <h3 style="color:green;">{{ result }}</h3>
 
-<h3>Your Guess History</h3>
+{% if message %}
+<p>{{ message | safe }}</p>
+{% endif %}
+
+{% if guesses and guesses|length > 0 %}
+<h3>Your Attempts This Game</h3>
+<div class="box">
+    <ul>
+        {% for g in guesses %}
+        <li>Attempt {{ loop.index }} — {{ g }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<br>
+
+<h3>Your Guess History (All Games)</h3>
 <div class="box">
     <ul>
         {% for h in history %}
-        <li>{{ h.date.strftime("%Y-%m-%d %H:%M:%S") }} — {{ h.attempts }} attempts</li>
+        <li>
+            {{ h.date.strftime("%Y-%m-%d %H:%M:%S") }} — {{ h.attempts }} attempts
+        </li>
         {% endfor %}
     </ul>
 </div>
@@ -20,6 +40,7 @@
 <a href="/leaderboard">Leaderboard</a>
 
 {% else %}
+<!-- 🎮 GAME IN PROGRESS -->
 
 <div class="box">
     <form method="POST">
@@ -28,8 +49,22 @@
     </form>
 </div>
 
+{% if message %}
 <p>{{ message | safe }}</p>
+{% endif %}
+
 <p>Attempts: {{ attempts }}</p>
+
+{% if guesses and guesses|length > 0 %}
+<div class="box">
+    <h3>Your Attempts So Far</h3>
+    <ul>
+        {% for g in guesses %}
+        <li>Attempt {{ loop.index }} — {{ g }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 
 {% endif %}
 
