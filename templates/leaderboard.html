@@ -6,7 +6,7 @@
 <h3>🥇 Global #1 Record</h3>
 <div class="box">
     {% if global_best %}
-    <strong>{{ global_best.name }}</strong> — {{ global_best.attempts }} attempts
+    <strong>{{ global_best._id }}</strong> — {{ global_best.attempts }} attempt(s)
     {% else %}
     No global score yet.
     {% endif %}
@@ -17,7 +17,7 @@
 <h3>All Players</h3>
 <ol>
     {% for r in rankings %}
-    <li>{{ r.name }} — {{ r.attempts }} attempts</li>
+    <li>{{ r._id }} — {{ r.attempts }} attempt(s)</li>
     {% endfor %}
 </ol>
 
