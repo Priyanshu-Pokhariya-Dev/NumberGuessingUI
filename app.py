@@ -5,6 +5,8 @@ from database import save_score, get_history, get_leaderboard, get_global_best
 app = Flask(__name__)
 app.secret_key = "your_secret_key_here"
 
+MAX_ATTEMPTS = 5
+
 
 # 🎯 ------------------ HOME PAGE ----------------------
 @app.route("/", methods=["GET", "POST"])
@@ -43,18 +45,33 @@ def game():
         else:
             # Increase attempt count
             session["attempts"] = session.get("attempts", 0) + 1
+            attempts_left = MAX_ATTEMPTS - session["attempts"]
 
-            # 👉 Store this guess in the session list
+            # Store guess
             guesses = session.get("guesses", [])
             guesses.append(guess)
             session["guesses"] = guesses
 
             number = session["number"]
 
-            # 📏 How close is the guess?
+            # ❗ INSTANT GAME OVER when attempts reach 0
+            if attempts_left <= 0 and guess != number:
+                result = "❌ Game Over! You've used all 5 attempts."
+                message = f"The correct number was {number}."
+                return render_template(
+                    "game.html",
+                    title="🎯 Play Game",
+                    player=session["player"],
+                    attempts=session["attempts"],
+                    message=message,
+                    result=result,
+                    history=get_history(session["player"]),
+                    guesses=session["guesses"],
+                )
+
+            # Hints
             difference = abs(guess - number)
 
-            # 🔮 HINT SYSTEM
             if difference == 0:
                 hint = ""
             elif difference <= 2:
@@ -68,7 +85,7 @@ def game():
             else:
                 hint = "Way off! Try a very different number."
 
-            # 📉📈 High / Low Feedback
+            # High/Low
             if guess < number:
                 message = "⬇️ It's low!"
             elif guess > number:
@@ -77,10 +94,14 @@ def game():
                 result = f"🎉 Correct! ✨ You nailed it in {session['attempts']} attempts! 🏆"
                 save_score(session["player"], session["attempts"])
 
+            # Add hint
             if hint and result is None:
-                message = message + f"<br>💡 Hint: {hint}"
+                message += f"<br>💡 Hint: {hint}"
 
-    # 📜 Player History from MongoDB
+            # Show attempts left if game not finished
+            if result is None:
+                message += f"<br>🕑 Attempts left: {attempts_left}"
+
     player_history = get_history(session["player"])
 
     return render_template(
@@ -112,7 +133,6 @@ def leaderboard():
 # 🔄 ------------------ RESET GAME ----------------------
 @app.route("/new_game")
 def new_game():
-    # keep player name, but reset the game completely
     if "player" not in session:
         return redirect("/")
 
