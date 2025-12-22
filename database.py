@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 
 # ----------------- MONGODB CONNECTION -----------------
-client = MongoClient("mongodb+srv://priyanshu:priyanshu1@project.i4fntrp.mongodb.net/?appName=project")
+client = MongoClient("mongodb+srv://priyanshu:priyanshu1@project.7uihi2p.mongodb.net/?retryWrites=true&w=majority")
 db = client["guess_game"]
 
 best_scores = db["best_scores"]
@@ -47,3 +47,4 @@ def get_leaderboard():
 
 def get_global_best():
     return best_scores.find_one(sort=[("attempts", 1)])
+
